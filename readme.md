@@ -5,7 +5,6 @@ Prebuilt nodejs bindings of https://github.com/twuky/raylib-4.0.
 ### Usage
 #### Import Module:
 ```javascript
-import * as raylib from 'raylib-bin'
 import raylib from 'raylib-bin'
 ```
 #### Import CommonJS:

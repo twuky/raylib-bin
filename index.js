@@ -1,464 +1,585 @@
-let raylib = {}
+import rl from './raylib.js'
 
-let platform = process.platform
+export default rl
+export const raylib = rl
 
-if (platform === 'win32') {
-	raylib = require('./raylib/win-x64/raylib-4.0.node')
-} else if (platform === 'darwin') {
-	raylib = require('./raylib/mac-x64/raylib-4.0.node')
-} else if (platform === 'linux' || platform === 'openbsd') {
-	raylib = require('./raylib/linux-x64/raylib-4.0.node')
-} else {
-	throw new Error('Raylib platform not supported!')
-}
-
-let wrapped = [
-  'UpdateCamera',
-	'ImageFormat',
-	'ImageToPOT',
-	'ImageCrop',
-	'ImageAlphaCrop',
-	'ImageAlphaClear',
-	'ImageAlphaMask',
-	'ImageAlphaPremultiply',
-	'ImageResize',
-	'ImageResizeNN',
-	'ImageResizeCanvas',
-	'ImageMipmaps',
-	'ImageDither',
-	'ImageFlipVertical',
-	'ImageFlipHorizontal',
-	'ImageRotateCW',
-	'ImageRotateCCW',
-	'ImageColorTint',
-	'ImageColorInvert',
-	'ImageColorGrayscale',
-	'ImageColorContrast',
-	'ImageColorBrightness',
-	'ImageColorReplace',
-	'ImageClearBackground',
-	'ImageDrawPixel',
-	'ImageDrawPixelV',
-	'ImageDrawLine',
-	'ImageDrawLineV',
-	'ImageDrawCircle',
-	'ImageDrawCircleV',
-	'ImageDrawRectangle',
-	'ImageDrawRectangleV',
-	'ImageDrawRectangleRec',
-	'ImageDrawRectangleLines',
-	'ImageDraw',
-	'ImageDrawText',
-	'ImageDrawTextEx',
-    'GenTextureMipmaps',
-    'GenTextureMipmaps',
-	'UploadMesh',
-	'GenMeshTangents',
-	'GenMeshBinormals',
-	'SetMaterialTexture',
-	'SetModelMeshMaterial',
-	'WaveFormat',
-	'WaveCrop'
-]
-// wrap functions with return type overrides (some C functions pass in object pointers)
-for (let func of wrapped) {
-    raylib[func] = function(...args) {
-        let obj = raylib['Wrap'+func](...args)
-        for (let key in obj) {
-            args[0][key] = obj[key]
-        }
-    }
-}
-
-// add Colors
-
-raylib.LIGHTGRAY = { r: 200, g: 200, b: 200, a: 255 }
-raylib.GRAY = { r: 130, g: 130, b: 130, a: 255 }
-raylib.DARKGRAY = { r: 80, g: 80, b: 80, a: 255 }
-raylib.YELLOW = { r: 253, g: 249, b: 0, a: 255 }
-raylib.GOLD = { r: 255, g: 203, b: 0, a: 255 }
-raylib.ORANGE = { r: 255, g: 161, b: 0, a: 255 }
-raylib.PINK = { r: 255, g: 109, b: 194, a: 255 }
-raylib.RED = { r: 230, g: 41, b: 55, a: 255 }
-raylib.MAROON = { r: 190, g: 33, b: 55, a: 255 }
-raylib.GREEN = { r: 0, g: 228, b: 48, a: 255 }
-raylib.LIME = { r: 0, g: 158, b: 47, a: 255 }
-raylib.DARKGREEN = { r: 0, g: 117, b: 44, a: 255 }
-raylib.SKYBLUE = { r: 102, g: 191, b: 255, a: 255 }
-raylib.BLUE = { r: 0, g: 121, b: 241, a: 255 }
-raylib.DARKBLUE = { r: 0, g: 82, b: 172, a: 255 }
-raylib.PURPLE = { r: 200, g: 122, b: 255, a: 255 }
-raylib.VIOLET = { r: 135, g: 60, b: 190, a: 255 }
-raylib.DARKPURPLE = { r: 112, g: 31, b: 126, a: 255 }
-raylib.BEIGE = { r: 211, g: 176, b: 131, a: 255 }
-raylib.BROWN = { r: 127, g: 106, b: 79, a: 255 }
-raylib.DARKBROWN = { r: 76, g: 63, b: 47, a: 255 }
-raylib.WHITE = { r: 255, g: 255, b: 255, a: 255 }
-raylib.BLACK = { r: 0, g: 0, b: 0, a: 255 }
-raylib.BLANK = { r: 0, g: 0, b: 0, a: 0 }
-raylib.MAGENTA = { r: 255, g: 0, b: 255, a: 255 }
-raylib.RAYWHITE = { r: 245, g: 245, b: 245, a: 255 }
-
-// Add Enumerators
-
-raylib.ConfigFlags = {
-    FLAG_VSYNC_HINT: 64,
-    FLAG_FULLSCREEN_MODE: 2,
-
-    FLAG_WINDOW_RESIZABLE: 4,
-    FLAG_WINDOW_UNDECORATED: 8,
-    FLAG_WINDOW_HIDDEN: 128,
-    FLAG_WINDOW_MINIMIZED: 512,
-    FLAG_WINDOW_MAXIMIZED: 1024,
-    FLAG_WINDOW_UNFOCUSED: 2048,
-    FLAG_WINDOW_TOPMOST: 4096,
-    FLAG_WINDOW_ALWAYS_RUN: 256,
-    FLAG_WINDOW_TRANSPARENT: 16,
-    FLAG_WINDOW_HIGHDPI: 8192,
-    FLAG_MSAA_4X_HINT: 32,
-    FLAG_INTERLACED_HINT: 65536,
-}
-
-raylib.TraceLogLevel = {
-    LOG_ALL: 0,
-    LOG_TRACE: 1,
-    LOG_DEBUG: 2,
-    LOG_INFO: 3,
-    LOG_WARNING: 4,
-    LOG_ERROR: 5,
-    LOG_FATAL: 6,
-    LOG_NONE: 7,
-}
-
-raylib.KeyboardKey = {
-    KEY_NULL: 0,
-    KEY_APOSTROPHE: 39,
-    KEY_COMMA: 44,
-    KEY_MINUS: 45,
-    KEY_PERIOD: 46,
-    KEY_SLASH: 47,
-    KEY_ZERO: 48,
-    KEY_ONE: 49,
-    KEY_TWO: 50,
-    KEY_THREE: 51,
-    KEY_FOUR: 52,
-    KEY_FIVE: 53,
-    KEY_SIX: 54,
-    KEY_SEVEN: 55,
-    KEY_EIGHT: 56,
-    KEY_NINE: 57,
-    KEY_SEMICOLON: 59,
-    KEY_EQUAL: 61,
-    KEY_A: 65,
-    KEY_B: 66,
-    KEY_C: 67,
-    KEY_D: 68,
-    KEY_E: 69,
-    KEY_F: 70,
-    KEY_G: 71,
-    KEY_H: 72,
-    KEY_I: 73,
-    KEY_J: 74,
-    KEY_K: 75,
-    KEY_L: 76,
-    KEY_M: 77,
-    KEY_N: 78,
-    KEY_O: 79,
-    KEY_P: 80,
-    KEY_Q: 81,
-    KEY_R: 82,
-    KEY_S: 83,
-    KEY_T: 84,
-    KEY_U: 85,
-    KEY_V: 86,
-    KEY_W: 87,
-    KEY_X: 88,
-    KEY_Y: 89,
-    KEY_Z: 90,
-    KEY_LEFT_BRACKET: 91,
-    KEY_BACKSLASH: 92,
-    KEY_RIGHT_BRACKET: 93,
-    KEY_GRAVE: 96,
-    KEY_SPACE: 32,
-    KEY_ESCAPE: 256,
-    KEY_ENTER: 257,
-    KEY_TAB: 258,
-    KEY_BACKSPACE: 259,
-    KEY_INSERT: 260,
-    KEY_DELETE: 261,
-    KEY_RIGHT: 262,
-    KEY_LEFT: 263,
-    KEY_DOWN: 264,
-    KEY_UP: 265,
-    KEY_PAGE_UP: 266,
-    KEY_PAGE_DOWN: 267,
-    KEY_HOME: 268,
-    KEY_END: 269,
-    KEY_CAPS_LOCK: 280,
-    KEY_SCROLL_LOCK: 281,
-    KEY_NUM_LOCK: 282,
-    KEY_PRINT_SCREEN: 283,
-    KEY_PAUSE: 284,
-    KEY_F1: 290,
-    KEY_F2: 291,
-    KEY_F3: 292,
-    KEY_F4: 293,
-    KEY_F5: 294,
-    KEY_F6: 295,
-    KEY_F7: 296,
-    KEY_F8: 297,
-    KEY_F9: 298,
-    KEY_F10: 299,
-    KEY_F11: 300,
-    KEY_F12: 301,
-    KEY_LEFT_SHIFT: 340,
-    KEY_LEFT_CONTROL: 341,
-    KEY_LEFT_ALT: 342,
-    KEY_LEFT_SUPER: 343,
-    KEY_RIGHT_SHIFT: 344,
-    KEY_RIGHT_CONTROL: 345,
-    KEY_RIGHT_ALT: 346,
-    KEY_RIGHT_SUPER: 347,
-    KEY_KB_MENU: 348,
-    KEY_KP_0: 320,
-    KEY_KP_1: 321,
-    KEY_KP_2: 322,
-    KEY_KP_3: 323,
-    KEY_KP_4: 324,
-    KEY_KP_5: 325,
-    KEY_KP_6: 326,
-    KEY_KP_7: 327,
-    KEY_KP_8: 328,
-    KEY_KP_9: 329,
-    KEY_KP_DECIMAL: 330,
-    KEY_KP_DIVIDE: 331,
-    KEY_KP_MULTIPLY: 332,
-    KEY_KP_SUBTRACT: 333,
-    KEY_KP_ADD: 334,
-    KEY_KP_ENTER: 335,
-    KEY_KP_EQUAL: 336,
-    KEY_BACK: 4,
-    KEY_MENU: 82,
-    KEY_VOLUME_UP: 24,
-    KEY_VOLUME_DOWN: 25,
-}
-
-raylib.MouseButton = {
-    MOUSE_BUTTON_LEFT: 0,
-    MOUSE_BUTTON_RIGHT: 1,
-    MOUSE_BUTTON_MIDDLE: 2,
-    MOUSE_BUTTON_SIDE: 3,
-    MOUSE_BUTTON_EXTRA: 4,
-    MOUSE_BUTTON_FORWARD: 5,
-    MOUSE_BUTTON_BACK: 6,
-}
-
-raylib.MouseCursor = {
-    MOUSE_CURSOR_DEFAULT: 0,
-    MOUSE_CURSOR_ARROW: 1,
-    MOUSE_CURSOR_IBEAM: 2,
-    MOUSE_CURSOR_CROSSHAIR: 3,
-    MOUSE_CURSOR_POINTING_HAND: 4,
-    MOUSE_CURSOR_RESIZE_EW: 5,
-    MOUSE_CURSOR_RESIZE_NS: 6,
-    MOUSE_CURSOR_RESIZE_NWSE: 7,
-    MOUSE_CURSOR_RESIZE_NESW: 8,
-    MOUSE_CURSOR_RESIZE_ALL: 9,
-    MOUSE_CURSOR_NOT_ALLOWED: 10,
-}
-
-raylib.GamepadButton = {
-    GAMEPAD_BUTTON_UNKNOWN: 0,
-    GAMEPAD_BUTTON_LEFT_FACE_UP: 1,
-    GAMEPAD_BUTTON_LEFT_FACE_RIGHT: 2,
-    GAMEPAD_BUTTON_LEFT_FACE_DOWN: 3,
-    GAMEPAD_BUTTON_LEFT_FACE_LEFT: 4,
-    GAMEPAD_BUTTON_RIGHT_FACE_UP: 5,
-    GAMEPAD_BUTTON_RIGHT_FACE_RIGHT: 6,
-    GAMEPAD_BUTTON_RIGHT_FACE_DOWN: 7,
-    GAMEPAD_BUTTON_RIGHT_FACE_LEFT: 8,
-    GAMEPAD_BUTTON_LEFT_TRIGGER_1: 9,
-    GAMEPAD_BUTTON_LEFT_TRIGGER_2: 10,
-    GAMEPAD_BUTTON_RIGHT_TRIGGER_1: 11,
-    GAMEPAD_BUTTON_RIGHT_TRIGGER_2: 12,
-    GAMEPAD_BUTTON_MIDDLE_LEFT: 13,
-    GAMEPAD_BUTTON_MIDDLE: 14,
-    GAMEPAD_BUTTON_MIDDLE_RIGHT: 15,
-    GAMEPAD_BUTTON_LEFT_THUMB: 16,
-    GAMEPAD_BUTTON_RIGHT_THUMB: 17,
-}
-
-
-raylib.GamepadAxis = {
-    GAMEPAD_AXIS_LEFT_X: 0,
-    GAMEPAD_AXIS_LEFT_Y: 1,
-    GAMEPAD_AXIS_RIGHT_X: 2,
-    GAMEPAD_AXIS_RIGHT_Y: 3,
-    GAMEPAD_AXIS_LEFT_TRIGGER: 4,
-    GAMEPAD_AXIS_RIGHT_TRIGGER: 5,
-}
-
-raylib.MaterialMapIndex = {
-    MATERIAL_MAP_ALBEDO: 0,
-    MATERIAL_MAP_METALNESS: 1,
-    MATERIAL_MAP_NORMAL: 2,
-    MATERIAL_MAP_ROUGHNESS: 3,
-    MATERIAL_MAP_OCCLUSION: 4,
-    MATERIAL_MAP_EMISSION: 5,
-    MATERIAL_MAP_HEIGHT: 6,
-    MATERIAL_MAP_CUBEMAP: 7,
-    MATERIAL_MAP_IRRADIANCE: 8,
-    MATERIAL_MAP_PREFILTER: 9,
-    MATERIAL_MAP_BRDF: 10,
-}
-
-raylib.ShaderLocationIndex = {
-    SHADER_LOC_VERTEX_POSITION: 0,
-    SHADER_LOC_VERTEX_TEXCOORD01: 1,
-    SHADER_LOC_VERTEX_TEXCOORD02: 2,
-    SHADER_LOC_VERTEX_NORMAL: 3,
-    SHADER_LOC_VERTEX_TANGENT: 4,
-    SHADER_LOC_VERTEX_COLOR: 5,
-    SHADER_LOC_MATRIX_MVP: 6,
-    SHADER_LOC_MATRIX_VIEW: 7,
-    SHADER_LOC_MATRIX_PROJECTION: 8,
-    SHADER_LOC_MATRIX_MODEL: 9,
-    SHADER_LOC_MATRIX_NORMAL: 10,
-    SHADER_LOC_VECTOR_VIEW: 11,
-    SHADER_LOC_COLOR_DIFFUSE: 12,
-    SHADER_LOC_COLOR_SPECULAR: 13,
-    SHADER_LOC_COLOR_AMBIENT: 14,
-    SHADER_LOC_MAP_ALBEDO: 15,
-    SHADER_LOC_MAP_METALNESS: 16,
-    SHADER_LOC_MAP_NORMAL: 17,
-    SHADER_LOC_MAP_ROUGHNESS: 18,
-    SHADER_LOC_MAP_OCCLUSION: 19,
-    SHADER_LOC_MAP_EMISSION: 20,
-    SHADER_LOC_MAP_HEIGHT: 21,
-    SHADER_LOC_MAP_CUBEMAP: 22,
-    SHADER_LOC_MAP_IRRADIANCE: 23,
-    SHADER_LOC_MAP_PREFILTER: 24,
-    SHADER_LOC_MAP_BRDF: 25,
-}
-
-raylib.ShaderUniformDataType = {
-    SHADER_UNIFORM_FLOAT: 0,
-    SHADER_UNIFORM_VEC2: 1,
-    SHADER_UNIFORM_VEC3: 2,
-    SHADER_UNIFORM_VEC4: 3,
-    SHADER_UNIFORM_INT: 4,
-    SHADER_UNIFORM_IVEC2: 5,
-    SHADER_UNIFORM_IVEC3: 6,
-    SHADER_UNIFORM_IVEC4: 7,
-    SHADER_UNIFORM_SAMPLER2D: 8,
-}
-
-raylib.ShaderAttributeDataType = {
-    SHADER_ATTRIB_FLOAT: 0,
-    SHADER_ATTRIB_VEC2: 1,
-    SHADER_ATTRIB_VEC3: 2,
-    SHADER_ATTRIB_VEC4: 3,
-}
-
-raylib.PixelFormat = {
-    PIXELFORMAT_UNCOMPRESSED_GRAYSCALE: 1,
-    PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA: 2,
-    PIXELFORMAT_UNCOMPRESSED_R5G6B5: 3,
-    PIXELFORMAT_UNCOMPRESSED_R8G8B8: 4,
-    PIXELFORMAT_UNCOMPRESSED_R5G5B5A1: 5,
-    PIXELFORMAT_UNCOMPRESSED_R4G4B4A4: 6,
-    PIXELFORMAT_UNCOMPRESSED_R8G8B8A8: 7,
-    PIXELFORMAT_UNCOMPRESSED_R32: 8,
-    PIXELFORMAT_UNCOMPRESSED_R32G32B32: 9,
-    PIXELFORMAT_UNCOMPRESSED_R32G32B32A32: 10,
-    PIXELFORMAT_COMPRESSED_DXT1_RGB: 11,
-    PIXELFORMAT_COMPRESSED_DXT1_RGBA: 12,
-    PIXELFORMAT_COMPRESSED_DXT3_RGBA: 13,
-    PIXELFORMAT_COMPRESSED_DXT5_RGBA: 14,
-    PIXELFORMAT_COMPRESSED_ETC1_RGB: 15,
-    PIXELFORMAT_COMPRESSED_ETC2_RGB: 16,
-    PIXELFORMAT_COMPRESSED_ETC2_EAC_RGBA: 17,
-    PIXELFORMAT_COMPRESSED_PVRT_RGB: 18,
-    PIXELFORMAT_COMPRESSED_PVRT_RGBA: 19,
-    PIXELFORMAT_COMPRESSED_ASTC_4x4_RGBA: 20,
-    PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA: 21,
-}
-
-raylib.TextureFilter = {
-    TEXTURE_FILTER_POINT: 0,
-    TEXTURE_FILTER_BILINEAR: 1,
-    TEXTURE_FILTER_TRILINEAR: 2,
-    TEXTURE_FILTER_ANISOTROPIC_4X: 3,
-    TEXTURE_FILTER_ANISOTROPIC_8X: 4,
-    TEXTURE_FILTER_ANISOTROPIC_16X: 5,
-}
-
-raylib.TextureWrap = {
-    TEXTURE_WRAP_REPEAT: 0,
-    TEXTURE_WRAP_CLAMP: 1,
-    TEXTURE_WRAP_MIRROR_REPEAT: 2,
-    TEXTURE_WRAP_MIRROR_CLAMP: 3,
-}
-
-raylib.CubemapLayout = {
-    CUBEMAP_LAYOUT_AUTO_DETECT: 0,
-    CUBEMAP_LAYOUT_LINE_VERTICAL: 1,
-    CUBEMAP_LAYOUT_LINE_HORIZONTAL: 2,
-    CUBEMAP_LAYOUT_CROSS_THREE_BY_FOUR: 3,
-    CUBEMAP_LAYOUT_CROSS_FOUR_BY_THREE: 4,
-    CUBEMAP_LAYOUT_PANORAMA: 5,
-}
-
-raylib.FontType = {
-    FONT_DEFAULT: 0,
-    FONT_BITMAP: 1,
-    FONT_SDF: 2,
-}
-
-raylib.BlendMode = {
-    BLEND_ALPHA: 0,
-    BLEND_ADDITIVE: 1,
-    BLEND_MULTIPLIED: 2,
-    BLEND_ADD_COLORS: 3,
-    BLEND_SUBTRACT_COLORS: 4,
-    BLEND_CUSTOM: 5,
-}
-
-raylib.Gesture = {
-    GESTURE_NONE: 0,
-    GESTURE_TAP: 1,
-    GESTURE_DOUBLETAP: 2,
-    GESTURE_HOLD: 4,
-    GESTURE_DRAG: 8,
-    GESTURE_SWIPE_RIGHT: 16,
-    GESTURE_SWIPE_LEFT: 32,
-    GESTURE_SWIPE_UP: 64,
-    GESTURE_SWIPE_DOWN: 128,
-    GESTURE_PINCH_IN: 256,
-    GESTURE_PINCH_OUT: 512,
-}
-
-raylib.CameraMode = {
-    CAMERA_CUSTOM: 0,
-    CAMERA_FREE: 1,
-    CAMERA_ORBITAL: 2,
-    CAMERA_FIRST_PERSON: 3,
-    CAMERA_THIRD_PERSON: 4,
-}
-
-raylib.CameraProjection = {
-    CAMERA_PERSPECTIVE: 0,
-    CAMERA_ORTHOGRAPHIC: 1,
-}
-
-raylib.NPatchLayout = {
-    NPATCH_NINE_PATCH: 0,
-    NPATCH_THREE_PATCH_VERTICAL: 1,
-    NPATCH_THREE_PATCH_HORIZONTAL: 2,
-}
-
-module.exports = {...raylib}
-
-exports.raylib = raylib
-
-exports.default = raylib
+export const Vector2 = rl.Vector2
+export const Vector3 = rl.Vector3
+export const Vector4 = rl.Vector4
+export const Matrix = rl.Matrix
+export const Color = rl.Color
+export const Rectangle = rl.Rectangle
+export const NPatchInfo = rl.NPatchInfo
+export const Camera3D = rl.Camera3D
+export const Camera2D = rl.Camera2D
+export const Transform = rl.Transform
+export const Ray = rl.Ray
+export const InitWindow = rl.InitWindow
+export const WindowShouldClose = rl.WindowShouldClose
+export const CloseWindow = rl.CloseWindow
+export const IsWindowReady = rl.IsWindowReady
+export const IsWindowFullscreen = rl.IsWindowFullscreen
+export const IsWindowHidden = rl.IsWindowHidden
+export const IsWindowMinimized = rl.IsWindowMinimized
+export const IsWindowMaximized = rl.IsWindowMaximized
+export const IsWindowFocused = rl.IsWindowFocused
+export const IsWindowResized = rl.IsWindowResized
+export const IsWindowState = rl.IsWindowState
+export const SetWindowState = rl.SetWindowState
+export const ClearWindowState = rl.ClearWindowState
+export const ToggleFullscreen = rl.ToggleFullscreen
+export const MaximizeWindow = rl.MaximizeWindow
+export const MinimizeWindow = rl.MinimizeWindow
+export const RestoreWindow = rl.RestoreWindow
+export const SetWindowIcon = rl.SetWindowIcon
+export const SetWindowTitle = rl.SetWindowTitle
+export const SetWindowPosition = rl.SetWindowPosition
+export const SetWindowMonitor = rl.SetWindowMonitor
+export const SetWindowMinSize = rl.SetWindowMinSize
+export const SetWindowSize = rl.SetWindowSize
+export const GetScreenWidth = rl.GetScreenWidth
+export const GetScreenHeight = rl.GetScreenHeight
+export const GetMonitorCount = rl.GetMonitorCount
+export const GetCurrentMonitor = rl.GetCurrentMonitor
+export const GetMonitorPosition = rl.GetMonitorPosition
+export const GetMonitorWidth = rl.GetMonitorWidth
+export const GetMonitorHeight = rl.GetMonitorHeight
+export const GetMonitorPhysicalWidth = rl.GetMonitorPhysicalWidth
+export const GetMonitorPhysicalHeight = rl.GetMonitorPhysicalHeight
+export const GetMonitorRefreshRate = rl.GetMonitorRefreshRate
+export const GetWindowPosition = rl.GetWindowPosition
+export const GetWindowScaleDPI = rl.GetWindowScaleDPI
+export const GetMonitorName = rl.GetMonitorName
+export const SetClipboardText = rl.SetClipboardText
+export const GetClipboardText = rl.GetClipboardText
+export const SwapScreenBuffer = rl.SwapScreenBuffer
+export const PollInputEvents = rl.PollInputEvents
+export const WaitTime = rl.WaitTime
+export const ShowCursor = rl.ShowCursor
+export const HideCursor = rl.HideCursor
+export const IsCursorHidden = rl.IsCursorHidden
+export const EnableCursor = rl.EnableCursor
+export const DisableCursor = rl.DisableCursor
+export const IsCursorOnScreen = rl.IsCursorOnScreen
+export const ClearBackground = rl.ClearBackground
+export const BeginDrawing = rl.BeginDrawing
+export const EndDrawing = rl.EndDrawing
+export const BeginMode2D = rl.BeginMode2D
+export const EndMode2D = rl.EndMode2D
+export const BeginMode3D = rl.BeginMode3D
+export const EndMode3D = rl.EndMode3D
+export const BeginTextureMode = rl.BeginTextureMode
+export const EndTextureMode = rl.EndTextureMode
+export const BeginShaderMode = rl.BeginShaderMode
+export const EndShaderMode = rl.EndShaderMode
+export const BeginBlendMode = rl.BeginBlendMode
+export const EndBlendMode = rl.EndBlendMode
+export const BeginScissorMode = rl.BeginScissorMode
+export const EndScissorMode = rl.EndScissorMode
+export const BeginVrStereoMode = rl.BeginVrStereoMode
+export const EndVrStereoMode = rl.EndVrStereoMode
+export const LoadVrStereoConfig = rl.LoadVrStereoConfig
+export const UnloadVrStereoConfig = rl.UnloadVrStereoConfig
+export const LoadShader = rl.LoadShader
+export const LoadShaderFromMemory = rl.LoadShaderFromMemory
+export const GetShaderLocation = rl.GetShaderLocation
+export const GetShaderLocationAttrib = rl.GetShaderLocationAttrib
+export const SetShaderValue = rl.SetShaderValue
+export const SetShaderValueV = rl.SetShaderValueV
+export const SetShaderValueMatrix = rl.SetShaderValueMatrix
+export const SetShaderValueTexture = rl.SetShaderValueTexture
+export const UnloadShader = rl.UnloadShader
+export const GetMouseRay = rl.GetMouseRay
+export const GetCameraMatrix = rl.GetCameraMatrix
+export const GetCameraMatrix2D = rl.GetCameraMatrix2D
+export const GetWorldToScreen = rl.GetWorldToScreen
+export const GetWorldToScreenEx = rl.GetWorldToScreenEx
+export const GetWorldToScreen2D = rl.GetWorldToScreen2D
+export const GetScreenToWorld2D = rl.GetScreenToWorld2D
+export const SetTargetFPS = rl.SetTargetFPS
+export const GetFPS = rl.GetFPS
+export const GetFrameTime = rl.GetFrameTime
+export const GetTime = rl.GetTime
+export const GetRandomValue = rl.GetRandomValue
+export const SetRandomSeed = rl.SetRandomSeed
+export const TakeScreenshot = rl.TakeScreenshot
+export const SetConfigFlags = rl.SetConfigFlags
+export const TraceLog = rl.TraceLog
+export const SetTraceLogLevel = rl.SetTraceLogLevel
+export const MemFree = rl.MemFree
+export const UnloadFileData = rl.UnloadFileData
+export const SaveFileData = rl.SaveFileData
+export const LoadFileText = rl.LoadFileText
+export const UnloadFileText = rl.UnloadFileText
+export const SaveFileText = rl.SaveFileText
+export const FileExists = rl.FileExists
+export const DirectoryExists = rl.DirectoryExists
+export const IsFileExtension = rl.IsFileExtension
+export const GetFileExtension = rl.GetFileExtension
+export const GetFileName = rl.GetFileName
+export const GetFileNameWithoutExt = rl.GetFileNameWithoutExt
+export const GetDirectoryPath = rl.GetDirectoryPath
+export const GetPrevDirectoryPath = rl.GetPrevDirectoryPath
+export const GetWorkingDirectory = rl.GetWorkingDirectory
+export const ClearDirectoryFiles = rl.ClearDirectoryFiles
+export const ChangeDirectory = rl.ChangeDirectory
+export const IsFileDropped = rl.IsFileDropped
+export const ClearDroppedFiles = rl.ClearDroppedFiles
+export const GetFileModTime = rl.GetFileModTime
+export const EncodeDataBase64 = rl.EncodeDataBase64
+export const SaveStorageValue = rl.SaveStorageValue
+export const LoadStorageValue = rl.LoadStorageValue
+export const OpenURL = rl.OpenURL
+export const IsKeyPressed = rl.IsKeyPressed
+export const IsKeyDown = rl.IsKeyDown
+export const IsKeyReleased = rl.IsKeyReleased
+export const IsKeyUp = rl.IsKeyUp
+export const SetExitKey = rl.SetExitKey
+export const GetKeyPressed = rl.GetKeyPressed
+export const GetCharPressed = rl.GetCharPressed
+export const IsGamepadAvailable = rl.IsGamepadAvailable
+export const GetGamepadName = rl.GetGamepadName
+export const IsGamepadButtonPressed = rl.IsGamepadButtonPressed
+export const IsGamepadButtonDown = rl.IsGamepadButtonDown
+export const IsGamepadButtonReleased = rl.IsGamepadButtonReleased
+export const IsGamepadButtonUp = rl.IsGamepadButtonUp
+export const GetGamepadButtonPressed = rl.GetGamepadButtonPressed
+export const GetGamepadAxisCount = rl.GetGamepadAxisCount
+export const GetGamepadAxisMovement = rl.GetGamepadAxisMovement
+export const SetGamepadMappings = rl.SetGamepadMappings
+export const IsMouseButtonPressed = rl.IsMouseButtonPressed
+export const IsMouseButtonDown = rl.IsMouseButtonDown
+export const IsMouseButtonReleased = rl.IsMouseButtonReleased
+export const IsMouseButtonUp = rl.IsMouseButtonUp
+export const GetMouseX = rl.GetMouseX
+export const GetMouseY = rl.GetMouseY
+export const GetMousePosition = rl.GetMousePosition
+export const GetMouseDelta = rl.GetMouseDelta
+export const SetMousePosition = rl.SetMousePosition
+export const SetMouseOffset = rl.SetMouseOffset
+export const SetMouseScale = rl.SetMouseScale
+export const GetMouseWheelMove = rl.GetMouseWheelMove
+export const SetMouseCursor = rl.SetMouseCursor
+export const GetTouchX = rl.GetTouchX
+export const GetTouchY = rl.GetTouchY
+export const GetTouchPosition = rl.GetTouchPosition
+export const GetTouchPointId = rl.GetTouchPointId
+export const GetTouchPointCount = rl.GetTouchPointCount
+export const SetGesturesEnabled = rl.SetGesturesEnabled
+export const IsGestureDetected = rl.IsGestureDetected
+export const GetGestureDetected = rl.GetGestureDetected
+export const GetGestureHoldDuration = rl.GetGestureHoldDuration
+export const GetGestureDragVector = rl.GetGestureDragVector
+export const GetGestureDragAngle = rl.GetGestureDragAngle
+export const GetGesturePinchVector = rl.GetGesturePinchVector
+export const GetGesturePinchAngle = rl.GetGesturePinchAngle
+export const SetCameraMode = rl.SetCameraMode
+export const UpdateCamera = rl.UpdateCamera
+export const SetCameraPanControl = rl.SetCameraPanControl
+export const SetCameraAltControl = rl.SetCameraAltControl
+export const SetCameraSmoothZoomControl = rl.SetCameraSmoothZoomControl
+export const SetCameraMoveControls = rl.SetCameraMoveControls
+export const SetShapesTexture = rl.SetShapesTexture
+export const DrawPixel = rl.DrawPixel
+export const DrawPixelV = rl.DrawPixelV
+export const DrawLine = rl.DrawLine
+export const DrawLineV = rl.DrawLineV
+export const DrawLineEx = rl.DrawLineEx
+export const DrawLineBezier = rl.DrawLineBezier
+export const DrawLineBezierQuad = rl.DrawLineBezierQuad
+export const DrawLineBezierCubic = rl.DrawLineBezierCubic
+export const DrawLineStrip = rl.DrawLineStrip
+export const DrawCircle = rl.DrawCircle
+export const DrawCircleSector = rl.DrawCircleSector
+export const DrawCircleSectorLines = rl.DrawCircleSectorLines
+export const DrawCircleGradient = rl.DrawCircleGradient
+export const DrawCircleV = rl.DrawCircleV
+export const DrawCircleLines = rl.DrawCircleLines
+export const DrawEllipse = rl.DrawEllipse
+export const DrawEllipseLines = rl.DrawEllipseLines
+export const DrawRing = rl.DrawRing
+export const DrawRingLines = rl.DrawRingLines
+export const DrawRectangle = rl.DrawRectangle
+export const DrawRectangleV = rl.DrawRectangleV
+export const DrawRectangleRec = rl.DrawRectangleRec
+export const DrawRectanglePro = rl.DrawRectanglePro
+export const DrawRectangleGradientV = rl.DrawRectangleGradientV
+export const DrawRectangleGradientH = rl.DrawRectangleGradientH
+export const DrawRectangleGradientEx = rl.DrawRectangleGradientEx
+export const DrawRectangleLines = rl.DrawRectangleLines
+export const DrawRectangleLinesEx = rl.DrawRectangleLinesEx
+export const DrawRectangleRounded = rl.DrawRectangleRounded
+export const DrawRectangleRoundedLines = rl.DrawRectangleRoundedLines
+export const DrawTriangle = rl.DrawTriangle
+export const DrawTriangleLines = rl.DrawTriangleLines
+export const DrawTriangleFan = rl.DrawTriangleFan
+export const DrawTriangleStrip = rl.DrawTriangleStrip
+export const DrawPoly = rl.DrawPoly
+export const DrawPolyLines = rl.DrawPolyLines
+export const DrawPolyLinesEx = rl.DrawPolyLinesEx
+export const CheckCollisionRecs = rl.CheckCollisionRecs
+export const CheckCollisionCircles = rl.CheckCollisionCircles
+export const CheckCollisionCircleRec = rl.CheckCollisionCircleRec
+export const CheckCollisionPointRec = rl.CheckCollisionPointRec
+export const CheckCollisionPointCircle = rl.CheckCollisionPointCircle
+export const CheckCollisionPointTriangle = rl.CheckCollisionPointTriangle
+export const CheckCollisionLines = rl.CheckCollisionLines
+export const CheckCollisionPointLine = rl.CheckCollisionPointLine
+export const GetCollisionRec = rl.GetCollisionRec
+export const LoadImage = rl.LoadImage
+export const LoadImageRaw = rl.LoadImageRaw
+export const LoadImageAnim = rl.LoadImageAnim
+export const LoadImageFromMemory = rl.LoadImageFromMemory
+export const LoadImageFromTexture = rl.LoadImageFromTexture
+export const LoadImageFromScreen = rl.LoadImageFromScreen
+export const UnloadImage = rl.UnloadImage
+export const ExportImage = rl.ExportImage
+export const ExportImageAsCode = rl.ExportImageAsCode
+export const GenImageColor = rl.GenImageColor
+export const GenImageGradientV = rl.GenImageGradientV
+export const GenImageGradientH = rl.GenImageGradientH
+export const GenImageGradientRadial = rl.GenImageGradientRadial
+export const GenImageChecked = rl.GenImageChecked
+export const GenImageWhiteNoise = rl.GenImageWhiteNoise
+export const GenImageCellular = rl.GenImageCellular
+export const ImageCopy = rl.ImageCopy
+export const ImageFromImage = rl.ImageFromImage
+export const ImageText = rl.ImageText
+export const ImageTextEx = rl.ImageTextEx
+export const ImageFormat = rl.ImageFormat
+export const ImageToPOT = rl.ImageToPOT
+export const ImageCrop = rl.ImageCrop
+export const ImageAlphaCrop = rl.ImageAlphaCrop
+export const ImageAlphaClear = rl.ImageAlphaClear
+export const ImageAlphaMask = rl.ImageAlphaMask
+export const ImageAlphaPremultiply = rl.ImageAlphaPremultiply
+export const ImageResize = rl.ImageResize
+export const ImageResizeNN = rl.ImageResizeNN
+export const ImageResizeCanvas = rl.ImageResizeCanvas
+export const ImageMipmaps = rl.ImageMipmaps
+export const ImageDither = rl.ImageDither
+export const ImageFlipVertical = rl.ImageFlipVertical
+export const ImageFlipHorizontal = rl.ImageFlipHorizontal
+export const ImageRotateCW = rl.ImageRotateCW
+export const ImageRotateCCW = rl.ImageRotateCCW
+export const ImageColorTint = rl.ImageColorTint
+export const ImageColorInvert = rl.ImageColorInvert
+export const ImageColorGrayscale = rl.ImageColorGrayscale
+export const ImageColorContrast = rl.ImageColorContrast
+export const ImageColorBrightness = rl.ImageColorBrightness
+export const ImageColorReplace = rl.ImageColorReplace
+export const LoadImageColors = rl.LoadImageColors
+export const LoadImagePalette = rl.LoadImagePalette
+export const UnloadImageColors = rl.UnloadImageColors
+export const UnloadImagePalette = rl.UnloadImagePalette
+export const GetImageAlphaBorder = rl.GetImageAlphaBorder
+export const GetImageColor = rl.GetImageColor
+export const ImageClearBackground = rl.ImageClearBackground
+export const ImageDrawPixel = rl.ImageDrawPixel
+export const ImageDrawPixelV = rl.ImageDrawPixelV
+export const ImageDrawLine = rl.ImageDrawLine
+export const ImageDrawLineV = rl.ImageDrawLineV
+export const ImageDrawCircle = rl.ImageDrawCircle
+export const ImageDrawCircleV = rl.ImageDrawCircleV
+export const ImageDrawRectangle = rl.ImageDrawRectangle
+export const ImageDrawRectangleV = rl.ImageDrawRectangleV
+export const ImageDrawRectangleRec = rl.ImageDrawRectangleRec
+export const ImageDrawRectangleLines = rl.ImageDrawRectangleLines
+export const ImageDraw = rl.ImageDraw
+export const ImageDrawText = rl.ImageDrawText
+export const ImageDrawTextEx = rl.ImageDrawTextEx
+export const LoadTexture = rl.LoadTexture
+export const LoadTextureFromImage = rl.LoadTextureFromImage
+export const LoadTextureCubemap = rl.LoadTextureCubemap
+export const LoadRenderTexture = rl.LoadRenderTexture
+export const UnloadTexture = rl.UnloadTexture
+export const UnloadRenderTexture = rl.UnloadRenderTexture
+export const UpdateTexture = rl.UpdateTexture
+export const UpdateTextureRec = rl.UpdateTextureRec
+export const GenTextureMipmaps = rl.GenTextureMipmaps
+export const SetTextureFilter = rl.SetTextureFilter
+export const SetTextureWrap = rl.SetTextureWrap
+export const DrawTexture = rl.DrawTexture
+export const DrawTextureV = rl.DrawTextureV
+export const DrawTextureEx = rl.DrawTextureEx
+export const DrawTextureRec = rl.DrawTextureRec
+export const DrawTextureQuad = rl.DrawTextureQuad
+export const DrawTextureTiled = rl.DrawTextureTiled
+export const DrawTexturePro = rl.DrawTexturePro
+export const DrawTextureNPatch = rl.DrawTextureNPatch
+export const DrawTexturePoly = rl.DrawTexturePoly
+export const Fade = rl.Fade
+export const ColorToInt = rl.ColorToInt
+export const ColorNormalize = rl.ColorNormalize
+export const ColorFromNormalized = rl.ColorFromNormalized
+export const ColorToHSV = rl.ColorToHSV
+export const ColorFromHSV = rl.ColorFromHSV
+export const ColorAlpha = rl.ColorAlpha
+export const ColorAlphaBlend = rl.ColorAlphaBlend
+export const GetColor = rl.GetColor
+export const GetPixelColor = rl.GetPixelColor
+export const SetPixelColor = rl.SetPixelColor
+export const GetPixelDataSize = rl.GetPixelDataSize
+export const GetFontDefault = rl.GetFontDefault
+export const LoadFont = rl.LoadFont
+export const LoadFontEx = rl.LoadFontEx
+export const LoadFontFromImage = rl.LoadFontFromImage
+export const LoadFontFromMemory = rl.LoadFontFromMemory
+export const LoadFontData = rl.LoadFontData
+export const GenImageFontAtlas = rl.GenImageFontAtlas
+export const UnloadFontData = rl.UnloadFontData
+export const UnloadFont = rl.UnloadFont
+export const DrawFPS = rl.DrawFPS
+export const DrawText = rl.DrawText
+export const DrawTextEx = rl.DrawTextEx
+export const DrawTextPro = rl.DrawTextPro
+export const DrawTextCodepoint = rl.DrawTextCodepoint
+export const MeasureText = rl.MeasureText
+export const MeasureTextEx = rl.MeasureTextEx
+export const GetGlyphIndex = rl.GetGlyphIndex
+export const GetGlyphInfo = rl.GetGlyphInfo
+export const GetGlyphAtlasRec = rl.GetGlyphAtlasRec
+export const LoadCodepoints = rl.LoadCodepoints
+export const UnloadCodepoints = rl.UnloadCodepoints
+export const GetCodepointCount = rl.GetCodepointCount
+export const GetCodepoint = rl.GetCodepoint
+export const CodepointToUTF8 = rl.CodepointToUTF8
+export const TextCodepointsToUTF8 = rl.TextCodepointsToUTF8
+export const TextCopy = rl.TextCopy
+export const TextIsEqual = rl.TextIsEqual
+export const TextLength = rl.TextLength
+export const TextFormat = rl.TextFormat
+export const TextSubtext = rl.TextSubtext
+export const TextReplace = rl.TextReplace
+export const TextInsert = rl.TextInsert
+export const TextJoin = rl.TextJoin
+export const TextAppend = rl.TextAppend
+export const TextFindIndex = rl.TextFindIndex
+export const TextToUpper = rl.TextToUpper
+export const TextToLower = rl.TextToLower
+export const TextToPascal = rl.TextToPascal
+export const TextToInteger = rl.TextToInteger
+export const DrawLine3D = rl.DrawLine3D
+export const DrawPoint3D = rl.DrawPoint3D
+export const DrawCircle3D = rl.DrawCircle3D
+export const DrawTriangle3D = rl.DrawTriangle3D
+export const DrawTriangleStrip3D = rl.DrawTriangleStrip3D
+export const DrawCube = rl.DrawCube
+export const DrawCubeV = rl.DrawCubeV
+export const DrawCubeWires = rl.DrawCubeWires
+export const DrawCubeWiresV = rl.DrawCubeWiresV
+export const DrawCubeTexture = rl.DrawCubeTexture
+export const DrawCubeTextureRec = rl.DrawCubeTextureRec
+export const DrawSphere = rl.DrawSphere
+export const DrawSphereEx = rl.DrawSphereEx
+export const DrawSphereWires = rl.DrawSphereWires
+export const DrawCylinder = rl.DrawCylinder
+export const DrawCylinderEx = rl.DrawCylinderEx
+export const DrawCylinderWires = rl.DrawCylinderWires
+export const DrawCylinderWiresEx = rl.DrawCylinderWiresEx
+export const DrawPlane = rl.DrawPlane
+export const DrawRay = rl.DrawRay
+export const DrawGrid = rl.DrawGrid
+export const LoadModel = rl.LoadModel
+export const LoadModelFromMesh = rl.LoadModelFromMesh
+export const UnloadModel = rl.UnloadModel
+export const UnloadModelKeepMeshes = rl.UnloadModelKeepMeshes
+export const GetModelBoundingBox = rl.GetModelBoundingBox
+export const DrawModel = rl.DrawModel
+export const DrawModelEx = rl.DrawModelEx
+export const DrawModelWires = rl.DrawModelWires
+export const DrawModelWiresEx = rl.DrawModelWiresEx
+export const DrawBoundingBox = rl.DrawBoundingBox
+export const DrawBillboard = rl.DrawBillboard
+export const DrawBillboardRec = rl.DrawBillboardRec
+export const DrawBillboardPro = rl.DrawBillboardPro
+export const UploadMesh = rl.UploadMesh
+export const UpdateMeshBuffer = rl.UpdateMeshBuffer
+export const UnloadMesh = rl.UnloadMesh
+export const DrawMesh = rl.DrawMesh
+export const DrawMeshInstanced = rl.DrawMeshInstanced
+export const ExportMesh = rl.ExportMesh
+export const GetMeshBoundingBox = rl.GetMeshBoundingBox
+export const GenMeshTangents = rl.GenMeshTangents
+export const GenMeshBinormals = rl.GenMeshBinormals
+export const GenMeshPoly = rl.GenMeshPoly
+export const GenMeshPlane = rl.GenMeshPlane
+export const GenMeshCube = rl.GenMeshCube
+export const GenMeshSphere = rl.GenMeshSphere
+export const GenMeshHemiSphere = rl.GenMeshHemiSphere
+export const GenMeshCylinder = rl.GenMeshCylinder
+export const GenMeshCone = rl.GenMeshCone
+export const GenMeshTorus = rl.GenMeshTorus
+export const GenMeshKnot = rl.GenMeshKnot
+export const GenMeshHeightmap = rl.GenMeshHeightmap
+export const GenMeshCubicmap = rl.GenMeshCubicmap
+export const LoadMaterials = rl.LoadMaterials
+export const LoadMaterialDefault = rl.LoadMaterialDefault
+export const UnloadMaterial = rl.UnloadMaterial
+export const SetMaterialTexture = rl.SetMaterialTexture
+export const SetModelMeshMaterial = rl.SetModelMeshMaterial
+export const UpdateModelAnimation = rl.UpdateModelAnimation
+export const UnloadModelAnimation = rl.UnloadModelAnimation
+export const UnloadModelAnimations = rl.UnloadModelAnimations
+export const IsModelAnimationValid = rl.IsModelAnimationValid
+export const CheckCollisionSpheres = rl.CheckCollisionSpheres
+export const CheckCollisionBoxes = rl.CheckCollisionBoxes
+export const CheckCollisionBoxSphere = rl.CheckCollisionBoxSphere
+export const GetRayCollisionSphere = rl.GetRayCollisionSphere
+export const GetRayCollisionBox = rl.GetRayCollisionBox
+export const GetRayCollisionModel = rl.GetRayCollisionModel
+export const GetRayCollisionMesh = rl.GetRayCollisionMesh
+export const GetRayCollisionTriangle = rl.GetRayCollisionTriangle
+export const GetRayCollisionQuad = rl.GetRayCollisionQuad
+export const InitAudioDevice = rl.InitAudioDevice
+export const CloseAudioDevice = rl.CloseAudioDevice
+export const IsAudioDeviceReady = rl.IsAudioDeviceReady
+export const SetMasterVolume = rl.SetMasterVolume
+export const LoadWave = rl.LoadWave
+export const LoadWaveFromMemory = rl.LoadWaveFromMemory
+export const LoadSound = rl.LoadSound
+export const LoadSoundFromWave = rl.LoadSoundFromWave
+export const UpdateSound = rl.UpdateSound
+export const UnloadWave = rl.UnloadWave
+export const UnloadSound = rl.UnloadSound
+export const ExportWave = rl.ExportWave
+export const ExportWaveAsCode = rl.ExportWaveAsCode
+export const PlaySound = rl.PlaySound
+export const StopSound = rl.StopSound
+export const PauseSound = rl.PauseSound
+export const ResumeSound = rl.ResumeSound
+export const PlaySoundMulti = rl.PlaySoundMulti
+export const StopSoundMulti = rl.StopSoundMulti
+export const GetSoundsPlaying = rl.GetSoundsPlaying
+export const IsSoundPlaying = rl.IsSoundPlaying
+export const SetSoundVolume = rl.SetSoundVolume
+export const SetSoundPitch = rl.SetSoundPitch
+export const WaveFormat = rl.WaveFormat
+export const WaveCopy = rl.WaveCopy
+export const WaveCrop = rl.WaveCrop
+export const LoadWaveSamples = rl.LoadWaveSamples
+export const UnloadWaveSamples = rl.UnloadWaveSamples
+export const LoadMusicStream = rl.LoadMusicStream
+export const LoadMusicStreamFromMemory = rl.LoadMusicStreamFromMemory
+export const UnloadMusicStream = rl.UnloadMusicStream
+export const PlayMusicStream = rl.PlayMusicStream
+export const IsMusicStreamPlaying = rl.IsMusicStreamPlaying
+export const UpdateMusicStream = rl.UpdateMusicStream
+export const StopMusicStream = rl.StopMusicStream
+export const PauseMusicStream = rl.PauseMusicStream
+export const ResumeMusicStream = rl.ResumeMusicStream
+export const SeekMusicStream = rl.SeekMusicStream
+export const SetMusicVolume = rl.SetMusicVolume
+export const SetMusicPitch = rl.SetMusicPitch
+export const GetMusicTimeLength = rl.GetMusicTimeLength
+export const GetMusicTimePlayed = rl.GetMusicTimePlayed
+export const LoadAudioStream = rl.LoadAudioStream
+export const UnloadAudioStream = rl.UnloadAudioStream
+export const UpdateAudioStream = rl.UpdateAudioStream
+export const IsAudioStreamProcessed = rl.IsAudioStreamProcessed
+export const PlayAudioStream = rl.PlayAudioStream
+export const PauseAudioStream = rl.PauseAudioStream
+export const ResumeAudioStream = rl.ResumeAudioStream
+export const IsAudioStreamPlaying = rl.IsAudioStreamPlaying
+export const StopAudioStream = rl.StopAudioStream
+export const SetAudioStreamVolume = rl.SetAudioStreamVolume
+export const SetAudioStreamPitch = rl.SetAudioStreamPitch
+export const SetAudioStreamBufferSizeDefault = rl.SetAudioStreamBufferSizeDefault
+export const SetShaderFloat = rl.SetShaderFloat
+export const SetShaderInt = rl.SetShaderInt
+export const SetShaderVector2 = rl.SetShaderVector2
+export const SetShaderVector3 = rl.SetShaderVector3
+export const SetShaderVector4 = rl.SetShaderVector4
+export const SetShaderSampler2D = rl.SetShaderSampler2D
+export const UpdateCamera3D = rl.UpdateCamera3D
+export const WrapImageFormat = rl.WrapImageFormat
+export const WrapImageToPOT = rl.WrapImageToPOT
+export const WrapImageCrop = rl.WrapImageCrop
+export const WrapImageAlphaCrop = rl.WrapImageAlphaCrop
+export const WrapImageAlphaClear = rl.WrapImageAlphaClear
+export const WrapImageAlphaMask = rl.WrapImageAlphaMask
+export const WrapImageAlphaPremultiply = rl.WrapImageAlphaPremultiply
+export const WrapImageResize = rl.WrapImageResize
+export const WrapImageResizeNN = rl.WrapImageResizeNN
+export const WrapImageResizeCanvas = rl.WrapImageResizeCanvas
+export const WrapImageMipmaps = rl.WrapImageMipmaps
+export const WrapImageDither = rl.WrapImageDither
+export const WrapImageFlipVertical = rl.WrapImageFlipVertical
+export const WrapImageFlipHorizontal = rl.WrapImageFlipHorizontal
+export const WrapImageRotateCW = rl.WrapImageRotateCW
+export const WrapImageRotateCCW = rl.WrapImageRotateCCW
+export const WrapImageColorTint = rl.WrapImageColorTint
+export const WrapImageColorInvert = rl.WrapImageColorInvert
+export const WrapImageColorGrayscale = rl.WrapImageColorGrayscale
+export const WrapImageColorContrast = rl.WrapImageColorContrast
+export const WrapImageColorBrightness = rl.WrapImageColorBrightness
+export const WrapImageColorReplace = rl.WrapImageColorReplace
+export const WrapImageClearBackground = rl.WrapImageClearBackground
+export const WrapImageDrawPixel = rl.WrapImageDrawPixel
+export const WrapImageDrawPixelV = rl.WrapImageDrawPixelV
+export const WrapImageDrawLine = rl.WrapImageDrawLine
+export const WrapImageDrawLineV = rl.WrapImageDrawLineV
+export const WrapImageDrawCircle = rl.WrapImageDrawCircle
+export const WrapImageDrawCircleV = rl.WrapImageDrawCircleV
+export const WrapImageDrawRectangle = rl.WrapImageDrawRectangle
+export const WrapImageDrawRectangleV = rl.WrapImageDrawRectangleV
+export const WrapImageDrawRectangleRec = rl.WrapImageDrawRectangleRec
+export const WrapImageDrawRectangleLines = rl.WrapImageDrawRectangleLines
+export const WrapImageDraw = rl.WrapImageDraw
+export const WrapImageDrawText = rl.WrapImageDrawText
+export const WrapImageDrawTextEx = rl.WrapImageDrawTextEx
+export const WrapGenTextureMipmaps = rl.WrapGenTextureMipmaps
+export const WrapUploadMesh = rl.WrapUploadMesh
+export const WrapGenMeshTangents = rl.WrapGenMeshTangents
+export const WrapGenMeshBinormals = rl.WrapGenMeshBinormals
+export const WrapSetMaterialTexture = rl.WrapSetMaterialTexture
+export const WrapSetModelMeshMaterial = rl.WrapSetModelMeshMaterial
+export const WrapWaveFormat = rl.WrapWaveFormat
+export const WrapWaveCrop = rl.WrapWaveCrop
+export const LIGHTGRAY = rl.LIGHTGRAY
+export const GRAY = rl.GRAY
+export const DARKGRAY = rl.DARKGRAY
+export const YELLOW = rl.YELLOW
+export const GOLD = rl.GOLD
+export const ORANGE = rl.ORANGE
+export const PINK = rl.PINK
+export const RED = rl.RED
+export const MAROON = rl.MAROON
+export const GREEN = rl.GREEN
+export const LIME = rl.LIME
+export const DARKGREEN = rl.DARKGREEN
+export const SKYBLUE = rl.SKYBLUE
+export const BLUE = rl.BLUE
+export const DARKBLUE = rl.DARKBLUE
+export const PURPLE = rl.PURPLE
+export const VIOLET = rl.VIOLET
+export const DARKPURPLE = rl.DARKPURPLE
+export const BEIGE = rl.BEIGE
+export const BROWN = rl.BROWN
+export const DARKBROWN = rl.DARKBROWN
+export const WHITE = rl.WHITE
+export const BLACK = rl.BLACK
+export const BLANK = rl.BLANK
+export const MAGENTA = rl.MAGENTA
+export const RAYWHITE = rl.RAYWHITE
+export const ConfigFlags = rl.ConfigFlags
+export const TraceLogLevel = rl.TraceLogLevel
+export const KeyboardKey = rl.KeyboardKey
+export const MouseButton = rl.MouseButton
+export const MouseCursor = rl.MouseCursor
+export const GamepadButton = rl.GamepadButton
+export const GamepadAxis = rl.GamepadAxis
+export const MaterialMapIndex = rl.MaterialMapIndex
+export const ShaderLocationIndex = rl.ShaderLocationIndex
+export const ShaderUniformDataType = rl.ShaderUniformDataType
+export const ShaderAttributeDataType = rl.ShaderAttributeDataType
+export const PixelFormat = rl.PixelFormat
+export const TextureFilter = rl.TextureFilter
+export const TextureWrap = rl.TextureWrap
+export const CubemapLayout = rl.CubemapLayout
+export const FontType = rl.FontType
+export const BlendMode = rl.BlendMode
+export const Gesture = rl.Gesture
+export const CameraMode = rl.CameraMode
+export const CameraProjection = rl.CameraProjection
+export const NPatchLayout = rl.NPatchLayout
