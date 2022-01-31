@@ -10,7 +10,7 @@ import raylib from 'raylib-bin'
 ```
 #### Import CommonJS:
 ```javascript
-const raylib = require('raylib-4.0')
+const raylib = require('raylib-bin')
 ```
 ### Your First Window
 ```javascript
